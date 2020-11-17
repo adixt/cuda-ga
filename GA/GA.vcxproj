@@ -13,6 +13,11 @@
   <ItemGroup>
     <CudaCompile Include="kernel.cu" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="compute_time.cuh" />
+    <ClInclude Include="cuda_rnd.cuh" />
+    <ClInclude Include="cpu_rnd.cuh" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{56D4CF38-1193-4A61-8313-C00A2ABE4A7D}</ProjectGuid>
     <RootNamespace>GA</RootNamespace>

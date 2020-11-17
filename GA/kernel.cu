@@ -1,67 +1,17 @@
-#include <iostream>
-#include <Windows.h>
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
-#include <ctime>
-#include <cmath>
-#include <random>
-#include <functional>
-
 // thrust library
-#include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
-#include <thrust/random.h>
 
 using namespace std;
 
 const unsigned int N = 3;
 const unsigned int GENERATION_SIZE = 100;
-const int start_xd_min[N] = { 2112,1180,417 };
-int individuals[N][GENERATION_SIZE] = {};
+const unsigned int start_xd_min[N] = { 2112,1180,417 };
+unsigned int individuals[N][GENERATION_SIZE] = {};
 
-// uniform distribution
-default_random_engine generator;
-uniform_real_distribution<double> distribution(0, 1);
-double dice_roll = distribution(generator);
-auto rnd = bind(distribution, generator);
+#include "cpu_rnd.cuh"
+#include "cuda_rnd.cuh"
 
-/* Generate CUDA uniform distribution
- *
- * Used by thrust transform functions to create large numbers of
- * random numbers in a uniform distribution.
- */
-struct cuda_rnd
-{
-	double a, b;
-
-	__host__ __device__
-		cuda_rnd(double _a = 0.f, double _b = 1.f) : a(_a), b(_b) {
-	};
-
-	__host__ __device__
-		double operator()(const unsigned int n) const
-	{
-		thrust::default_random_engine rng;
-		thrust::uniform_real_distribution<double> dist(a, b);
-		rng.discard(n);
-
-		return dist(rng);
-	}
-};
-
-LARGE_INTEGER tb, te, tf;
-
-void ComputeTimeStart()
-{
-	QueryPerformanceFrequency(&tf);
-	QueryPerformanceCounter(&tb);
-}
-
-double ComputeTimeEnd()
-{
-	QueryPerformanceCounter(&te);
-	return 1000.0 * (double(te.QuadPart - tb.QuadPart)) / double(tf.QuadPart);
-}
+#include "compute_time.cuh"
 
 void gpu()
 {
