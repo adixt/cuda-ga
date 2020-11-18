@@ -18,6 +18,9 @@
     <ClInclude Include="cuda_rnd.cuh" />
     <ClInclude Include="cpu_rnd.cuh" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{56D4CF38-1193-4A61-8313-C00A2ABE4A7D}</ProjectGuid>
     <RootNamespace>GA</RootNamespace>
