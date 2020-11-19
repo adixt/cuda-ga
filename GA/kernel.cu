@@ -1,6 +1,6 @@
 // thrust library
 #include <thrust/device_vector.h>
-
+#include <thrust/extrema.h>
 using namespace std;
 
 const unsigned int N = 3;
@@ -13,6 +13,14 @@ unsigned int individuals[N][GENERATION_SIZE] = {};
 
 #include "compute_time.cuh"
 
+const int n = 3;
+const int ns = 2;
+const int allNodes = n + ns;
+int LT[allNodes][n] = {};
+
+const int x_inf = 100000;
+const int simTime = 60;
+
 void gpu()
 {
 	// device storage for doubles
@@ -24,6 +32,14 @@ void gpu()
 		index_sequence_begin + GENERATION_SIZE * N,
 		population.begin(),
 		cuda_rnd());
+
+
+	thrust::device_vector<int> LTcuda(allNodes * n);
+
+	thrust::copy(&(LT[0][0]), &(LT[allNodes - 1][n - 1]), LTcuda.begin());
+	thrust::device_vector<int>::iterator iter =
+		thrust::max_element(LTcuda.begin(), LTcuda.end());
+	int Lcuda = *iter;
 
 	ComputeTimeStart();
 	for (int node = 0; node < N; node++) {
@@ -61,6 +77,16 @@ void cpu()
 		}
 		cout << "\n";
 	}
+
+	LT[3][0] = 2;
+	LT[4][1] = 4;
+	LT[1][2] = 3;
+	LT[0][2] = 3;
+	LT[0][1] = 1;
+
+	int* start = &LT[0][0];
+	// max lead time
+	int L = *max_element(start, start + allNodes * n);
 
 	double tt = ComputeTimeEnd();
 	cout << "CPU time: " << tt << " ms\n";
