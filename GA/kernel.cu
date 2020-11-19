@@ -61,6 +61,7 @@ void gpu()
 	cout << "\nGPU time: " << tt << " ms\n";
 }
 
+#include "vector_types.cuh"
 void cpu()
 {
 	ComputeTimeStart();
@@ -87,6 +88,22 @@ void cpu()
 	int* start = &LT[0][0];
 	// max lead time
 	int L = *max_element(start, start + allNodes * n);
+
+	float LA_nom[allNodes][n] = {};
+	three_dimension_vector_float LA(simTime, vector<vector<float>>(allNodes, vector<float>(n)));
+
+	LA[0][3][0] = LA_nom[3][0] = 1;
+	LA[0][4][1] = LA_nom[4][1] = 0.8f;
+	LA[0][1][2] = LA_nom[1][2] = 0.6f;
+	LA[0][0][2] = LA_nom[0][2] = 0.4f;
+	LA[0][0][1] = LA_nom[0][1] = 0.2f;
+	
+	cout << endl;
+	for (int i = 0; i < allNodes; i++) {
+		for (int j = 0; j < n; j++)
+			cout << LA[0][i][j] << " ";
+		cout << endl;
+	}cout << endl;
 
 	double tt = ComputeTimeEnd();
 	cout << "CPU time: " << tt << " ms\n";

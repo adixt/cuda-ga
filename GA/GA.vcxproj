@@ -17,6 +17,7 @@
     <ClInclude Include="compute_time.cuh" />
     <ClInclude Include="cuda_rnd.cuh" />
     <ClInclude Include="cpu_rnd.cuh" />
+    <ClInclude Include="vector_types.cuh" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
