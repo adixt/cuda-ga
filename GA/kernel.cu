@@ -97,13 +97,25 @@ void cpu()
 	LA[0][1][2] = LA_nom[1][2] = 0.6f;
 	LA[0][0][2] = LA_nom[0][2] = 0.4f;
 	LA[0][0][1] = LA_nom[0][1] = 0.2f;
-	
+
 	cout << endl;
 	for (int i = 0; i < allNodes; i++) {
 		for (int j = 0; j < n; j++)
 			cout << LA[0][i][j] << " ";
 		cout << endl;
 	}cout << endl;
+
+	// Verify if allocation correct - elements in each column should sum up to 1 or 0	
+	for (int j = 0; j < n; j++) {
+		float temp = 0;
+		for (int i = 0; i < allNodes; i++) {
+			temp = temp + LA[0][i][j];
+		}
+
+		if (temp != 0 && temp != 1) {
+			throw ("Improper allocation in column: %d", j);
+		}
+	}
 
 	double tt = ComputeTimeEnd();
 	cout << "CPU time: " << tt << " ms\n";
