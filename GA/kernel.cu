@@ -64,6 +64,7 @@ void gpu()
 #include "vector_types.cuh"
 #include "vector_operators.cuh"
 #include "vector_operations.cuh"
+#include "eigen_operations.cuh"
 
 void cpu()
 {
@@ -126,7 +127,7 @@ void cpu()
 	//Print2DVector<int>(x, "stock level ");
 
 	// Demand
-	int dmax[n] = { 10, 15, 20 };
+	vector<int> dmax{ 10, 15, 20 };
 	two_dimension_vector_int d(n, vector<int>(simTime, {})); // int d[n][simTime] = {};
 
 	for (int j = 0; j < simTime; j++) {
@@ -177,6 +178,8 @@ void cpu()
 	}
 
 	Lambda = Lambda + B_0; // eq 11 
+
+	vector<float> xd_min = GetXdMin(n, L, B, Lambda, dmax);
 
 	double tt = ComputeTimeEnd();
 	cout << "CPU time: " << tt << " ms\n";
