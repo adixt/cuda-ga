@@ -62,12 +62,15 @@ void gpu()
 }
 
 #include "vector_types.cuh"
+#include "vector_operators.cuh"
+#include "vector_operations.cuh"
+
 void cpu()
 {
 	ComputeTimeStart();
 	for (int node = 0; node < N; node++) {
 		for (int individualNo = 0; individualNo < GENERATION_SIZE; individualNo++) {
-			individuals[node][individualNo] = round(rnd() * start_xd_min[node]);
+			individuals[node][individualNo] = static_cast<int>(round(rnd() * start_xd_min[node]));
 		}
 	}
 
@@ -97,13 +100,7 @@ void cpu()
 	LA[0][1][2] = LA_nom[1][2] = 0.6f;
 	LA[0][0][2] = LA_nom[0][2] = 0.4f;
 	LA[0][0][1] = LA_nom[0][1] = 0.2f;
-
-	cout << endl;
-	for (int i = 0; i < allNodes; i++) {
-		for (int j = 0; j < n; j++)
-			cout << LA[0][i][j] << " ";
-		cout << endl;
-	}cout << endl;
+	//Print2DVector<float>(LA[0], "delay matrix");
 
 	// Verify if allocation correct - elements in each column should sum up to 1 or 0	
 	for (int j = 0; j < n; j++) {
@@ -116,6 +113,70 @@ void cpu()
 			throw ("Improper allocation in column: %d", j);
 		}
 	}
+
+	// Initial conditions
+	int time[simTime] = {};
+	int u[n][simTime] = {};
+	int u_hist[n][simTime] = {}; // order history
+	two_dimension_vector_int x(simTime, vector<int>(allNodes, 0));
+	int y[allNodes][simTime] = {};
+	int xd[allNodes] = { 80, 120, 98, 0, 0 };
+
+	x[0] = { 70, 140, 88, x_inf, x_inf }; // initial stock level
+	//Print2DVector<int>(x, "stock level ");
+
+	// Demand
+	int dmax[n] = { 10, 15, 20 };
+	two_dimension_vector_int d(n, vector<int>(simTime, {})); // int d[n][simTime] = {};
+
+	for (int j = 0; j < simTime; j++) {
+		double multiplier = 1;
+		for (int k = 0; k < n; k++) {
+			double demand = multiplier * dmax[k] * rnd();
+			int randomDemand = static_cast<int>(round(demand));
+			if (randomDemand > dmax[k]) d[k][j] = dmax[k];
+			else d[k][j] = randomDemand;
+		}
+	};
+	//Print2DVector<int>(d, "demand");
+
+	// State - space description
+	// System matrices
+	three_dimension_vector_float B_nom(L, two_dimension_vector_float(n, vector<float>(n)));
+	four_dimension_vector_float B(simTime, three_dimension_vector_float(L, two_dimension_vector_float(n, vector<float>(n))));
+
+	// Assuming zero order processing time(eq 9)
+	two_dimension_vector_float B_0(n, vector<float>(n));
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			B_0[i][j] = LA[0][i][j] * -1;
+		}
+	}
+
+	// index k corresponds to delay k(eq 8)	
+	for (int k = 0; k < L; k++) {
+		for (int j = 0; j < n; j++) {
+			float t_sum = 0;
+			for (int i = 0; i < allNodes; i++) {
+				if (LT[i][j] == k + 1) {
+					t_sum = t_sum + LA[0][i][j];
+				}
+			}
+			B_nom[k][j][j] = t_sum;
+		}
+	}
+	//Print3DVector<float>(B_nom, "B matrix");
+	B[0] = B_nom;
+
+	//% Sum of delay matrices
+	two_dimension_vector_float Lambda(n, vector<float>(n, {}));
+
+	// table index k corresponds to delay k
+	for (int k = 0; k < L; k++) {
+		Lambda = Lambda + B[0][k];
+	}
+
+	Lambda = Lambda + B_0; // eq 11 
 
 	double tt = ComputeTimeEnd();
 	cout << "CPU time: " << tt << " ms\n";
