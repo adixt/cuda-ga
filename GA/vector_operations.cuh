@@ -1,3 +1,4 @@
+#pragma once
 #include<vector>
 #include <algorithm>
 #include <string>
@@ -15,6 +16,17 @@ void Multiply2DVectorByScalar(vector<vector<float>>& v, float k) {
 			MultiplyVectorByScalar(v, k);
 		}
 	);
+}
+
+template <typename T>
+void PrintVector(vector<T>& v, string vectorName)
+{
+	cout << "\n" << "=============== " << vectorName << " ===============\n";
+	for (int i = 0; i < v.size(); i++) {	
+		cout << v[i] << " ";
+	}
+	cout << "\n";	
+	cout << "==========================================\n";
 }
 
 template <typename T>
