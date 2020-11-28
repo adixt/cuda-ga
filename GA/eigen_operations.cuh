@@ -5,7 +5,7 @@ using namespace std;
 #include "vector_operators.cuh"
 #include <Eigen/Dense>
 
-vector<float> GetXdMin(int n, int L, four_dimension_vector_float B, two_dimension_vector_float Lambda, vector<int> dmax) {
+vector<float> GetXdMin(int n, int L, four_dimension_vector_float&  B, two_dimension_vector_float&  Lambda, vector<int>&  dmax) {
 	//	 Reference stock level for full demand satisfaction
 	two_dimension_vector_float summed(n, vector<float>(n));
 	
