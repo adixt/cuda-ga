@@ -1,3 +1,4 @@
+#pragma once
 #include <ctime>
 
 using namespace std;
@@ -10,7 +11,7 @@ void ComputeTimeStart()
 	c_start = clock();
 }
 
-double ComputeTimeStart()
+double ComputeTimeEnd()
 {
 	c_end = clock();
 	return 1000.0 * (c_end-c_start) / CLOCKS_PER_SEC;;
