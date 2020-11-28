@@ -1,3 +1,4 @@
+#pragma once
 using namespace std;
 #include "vector_types.cuh"
 #include "vector_operations.cuh"
