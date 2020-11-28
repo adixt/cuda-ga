@@ -11,7 +11,7 @@ unsigned int individuals[N][GENERATION_SIZE] = {};
 #include "cpu_rnd.cuh"
 #include "cuda_rnd.cuh"
 
-#include "compute_time.cuh"
+#include "compute_time_linux.cuh"
 
 const int n = 3;
 const int ns = 2;
@@ -64,6 +64,7 @@ void gpu()
 #include "vector_types.cuh"
 #include "vector_operators.cuh"
 #include "vector_operations.cuh"
+#include "eigen_operations.cuh"
 
 void cpu()
 {
@@ -126,7 +127,7 @@ void cpu()
 	//Print2DVector<int>(x, "stock level ");
 
 	// Demand
-	int dmax[n] = { 10, 15, 20 };
+	vector<int> dmax{ 10, 15, 20 };
 	two_dimension_vector_int d(n, vector<int>(simTime, {})); // int d[n][simTime] = {};
 
 	for (int j = 0; j < simTime; j++) {
@@ -177,6 +178,9 @@ void cpu()
 	}
 
 	Lambda = Lambda + B_0; // eq 11 
+
+	vector<float> xd_min = GetXdMin(n, L, B, Lambda, dmax);
+	PrintVector(xd_min, "xd min");
 
 	double tt = ComputeTimeEnd();
 	cout << "CPU time: " << tt << " ms\n";
