@@ -11,7 +11,7 @@ unsigned int individuals[N][GENERATION_SIZE] = {};
 #include "cpu_rnd.cuh"
 #include "cuda_rnd.cuh"
 
-#include "compute_time.cuh"
+#include "compute_time_linux.cuh"
 
 const int n = 3;
 const int ns = 2;
@@ -180,6 +180,7 @@ void cpu()
 	Lambda = Lambda + B_0; // eq 11 
 
 	vector<float> xd_min = GetXdMin(n, L, B, Lambda, dmax);
+	PrintVector(xd_min, "xd min");
 
 	double tt = ComputeTimeEnd();
 	cout << "CPU time: " << tt << " ms\n";
